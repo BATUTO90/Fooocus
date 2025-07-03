@@ -1,397 +1,212 @@
-[
-    {
-        "name": "cinematic-diva",
-        "prompt": "UHD, 8K, ultra detailed, a cinematic photograph of {prompt}, beautiful lighting, great composition",
-        "negative_prompt": "ugly, deformed, noisy, blurry, NSFW"
-    },
-    {
-        "name": "Abstract Expressionism",
-        "prompt": "Abstract Expressionism Art, {prompt}, High contrast, minimalistic, colorful, stark, dramatic, expressionism",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, realism, photorealistic"
-    },
-    {
-        "name": "Academia",
-        "prompt": "Academia, {prompt}, preppy Ivy League style, stark, dramatic, chic boarding school, academia",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, grunge, sloppy, unkempt"
-    },
-    {
-        "name": "Action Figure",
-        "prompt": "Action Figure, {prompt}, plastic collectable action figure, collectable toy action figure",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Adorable 3D Character",
-        "prompt": "Adorable 3D Character, {prompt}, 3D render, adorable character, 3D art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, grunge, sloppy, unkempt, photograph, photo, realistic"
-    },
-    {
-        "name": "Adorable Kawaii",
-        "prompt": "Adorable Kawaii, {prompt}, pretty, cute, adorable, kawaii",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, gothic, dark, moody, monochromatic"
-    },
-    {
-        "name": "Art Deco",
-        "prompt": "Art Deco, {prompt}, sleek, geometric forms, art deco style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Art Nouveau",
-        "prompt": "Art Nouveau, beautiful art, {prompt}, sleek, organic forms, long, sinuous, art nouveau style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, industrial, mechanical"
-    },
-    {
-        "name": "Astral Aura",
-        "prompt": "Astral Aura, {prompt}, astral, colorful aura, vibrant energy",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Avant-garde",
-        "prompt": "Avant-garde, {prompt}, unusual, experimental, avant-garde art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Baroque",
-        "prompt": "Baroque, {prompt}, dramatic, exuberant, grandeur, baroque art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Bauhaus-Style Poster",
-        "prompt": "Bauhaus-Style Poster, {prompt}, simple geometric shapes, clean lines, primary colors, Bauhaus-Style Poster",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Blueprint Schematic Drawing",
-        "prompt": "Blueprint Schematic Drawing, {prompt}, technical drawing, blueprint, schematic",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Caricature",
-        "prompt": "Caricature, {prompt}, exaggerated, comical, caricature",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, realistic"
-    },
-    {
-        "name": "Cel Shaded Art",
-        "prompt": "Cel Shaded Art, {prompt}, 2D, flat color, toon shading, cel shaded style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Character Design Sheet",
-        "prompt": "Character Design Sheet, {prompt}, character reference sheet, character turn around",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Classicism Art",
-        "prompt": "Classicism Art, {prompt}, inspired by Roman and Greek culture, clarity, harmonious, classicism art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Color Field Painting",
-        "prompt": "Color Field Painting, {prompt}, abstract, simple, geometic, color field painting style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Colored Pencil Art",
-        "prompt": "Colored Pencil Art, {prompt}, colored pencil strokes, light color, visible paper texture, colored pencil art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Conceptual Art",
-        "prompt": "Conceptual Art, {prompt}, concept art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Constructivism",
-        "prompt": "Constructivism Art, {prompt}, minimalistic, geometric forms, constructivism art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Cubism",
-        "prompt": "Cubism Art, {prompt}, flat geometric forms, cubism art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Dadaism",
-        "prompt": "Dadaism Art, {prompt}, satirical, nonsensical, dadaism art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Dark Fantasy",
-        "prompt": "Dark Fantasy Art, {prompt}, dark, moody, dark fantasy style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, bright, sunny"
-    },
-    {
-        "name": "Dark Moody Atmosphere",
-        "prompt": "Dark Moody Atmosphere, {prompt}, dramatic, mysterious, dark moody atmosphere",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, vibrant, colorful, bright"
-    },
-    {
-        "name": "DMT Art Style",
-        "prompt": "DMT Art Style, {prompt}, bright colors, surreal visuals, swirling patterns, DMT art style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Doodle Art",
-        "prompt": "Doodle Art Style, {prompt}, drawing, freeform, swirling patterns, doodle art style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Double Exposure",
-        "prompt": "Double Exposure Style, {prompt}, double image ghost effect, image combination, double exposure style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Dripping Paint Splatter Art",
-        "prompt": "Dripping Paint Splatter Art, {prompt}, dramatic, paint drips, splatters, dripping paint",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Expressionism",
-        "prompt": "Expressionism Art Style, {prompt}, movement, contrast, emotional, exaggerated forms, expressionism art style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Faded Polaroid Photo",
-        "prompt": "Faded Polaroid Photo, {prompt}, analog, old faded photo, old polaroid",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, vibrant, colorful"
-    },
-    {
-        "name": "Fauvism",
-        "prompt": "Fauvism Art, {prompt}, painterly, bold colors, textured brushwork, fauvism art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Flat 2D Art",
-        "prompt": "Flat 2D Art, {prompt}, simple flat color, 2-dimensional, Flat 2D Art Style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, 3D, photo, realistic"
-    },
-    {
-        "name": "Fortnite Art Style",
-        "prompt": "Fortnite Art Style, {prompt}, 3D cartoon, colorful, Fortnite Art Style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, photo, realistic"
-    },
-    {
-        "name": "Futurism",
-        "prompt": "Futurism Art Style, {prompt}, dynamic, dramatic, Futurism Art Style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Glitchcore",
-        "prompt": "Glitchcore Art Style, {prompt}, dynamic, dramatic, distorted, vibrant colors, glitchcore art style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Glo-fi",
-        "prompt": "Glo-fi Art Style, {prompt}, dynamic, dramatic, vibrant colors, glo-fi art style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Googie Art Style",
-        "prompt": "Googie Art Style, {prompt}, dynamic, dramatic, 1950's futurism, bold boomerang angles, Googie art style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Graffiti Art",
-        "prompt": "Graffiti Art Style, {prompt}, dynamic, dramatic, vibrant colors, graffiti art style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Harlem Renaissance Art",
-        "prompt": "Harlem Renaissance Art Style, {prompt}, dynamic, dramatic, 1920s African American culture, Harlem Renaissance art style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "High Fashion",
-        "prompt": "High Fashion, {prompt}, dynamic, dramatic, haute couture, elegant, ornate clothing, High Fashion",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Idyllic",
-        "prompt": "Idyllic, {prompt}, peaceful, happy, pleasant, happy, harmonious, picturesque, charming",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Impressionism",
-        "prompt": "Impressionism, {prompt}, painterly, small brushstrokes, visible brushstrokes, impressionistic style",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Infographic Drawing",
-        "prompt": "Infographic Drawing, {prompt}, diagram, infographic",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Ink Dripping Drawing",
-        "prompt": "Ink Dripping Drawing, {prompt}, ink drawing, dripping ink",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, colorful, vibrant"
-    },
-    {
-        "name": "Japanese Ink Drawing",
-        "prompt": "Japanese Ink Drawing, {prompt}, ink drawing, inkwash, Japanese Ink Drawing",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, colorful, vibrant"
-    },
-    {
-        "name": "Knolling Photography",
-        "prompt": "Knolling Photography, {prompt}, flat lay photography, object arrangment, knolling photography",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Light Cheery Atmosphere",
-        "prompt": "Light Cheery Atmosphere, {prompt}, happy, joyful, cheerful, carefree, gleeful, lighthearted, pleasant atmosphere",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, monochromatic, dark, moody"
-    },
-    {
-        "name": "Logo Design",
-        "prompt": "Logo Design, {prompt}, dynamic graphic art, vector art, minimalist, professional logo design",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Luxurious Elegance",
-        "prompt": "Luxurious Elegance, {prompt}, extravagant, ornate, designer, opulent, picturesque, lavish",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Macro Photography",
-        "prompt": "Macro Photography, {prompt}, close-up, macro 100mm, macro photography",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Mandola Art",
-        "prompt": "Mandola art style, {prompt}, complex, circular design, mandola",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Marker Drawing",
-        "prompt": "Marker Drawing, {prompt}, bold marker lines, visibile paper texture, marker drawing",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, photograph, realistic"
-    },
-    {
-        "name": "Medievalism",
-        "prompt": "Medievalism, {prompt}, inspired by The Middle Ages, medieval art, elaborate patterns and decoration, Medievalism",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Minimalism",
-        "prompt": "Minimalism, {prompt}, abstract, simple geometic shapes, hard edges, sleek contours, Minimalism",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Neo-Baroque",
-        "prompt": "Neo-Baroque, {prompt}, ornate and elaborate, dynaimc, Neo-Baroque",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Neo-Byzantine",
-        "prompt": "Neo-Byzantine, {prompt}, grand decorative religious style, Orthodox Christian inspired, Neo-Byzantine",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Neo-Futurism",
-        "prompt": "Neo-Futurism, {prompt}, high-tech, curves, spirals, flowing lines, idealistic future, Neo-Futurism",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Neo-Impressionism",
-        "prompt": "Neo-Impressionism, {prompt}, tiny dabs of color, Pointillism, painterly, Neo-Impressionism",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, photograph, realistic"
-    },
-    {
-        "name": "Neo-Rococo",
-        "prompt": "Neo-Rococo, {prompt}, curved forms, naturalistic ornamentation, elaborate, decorative, gaudy, Neo-Rococo",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Neoclassicism",
-        "prompt": "Neoclassicism, {prompt}, ancient Rome and Greece inspired, idealic, sober colors, Neoclassicism",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Op Art",
-        "prompt": "Op Art, {prompt}, optical illusion, abstract, geometric pattern, impression of movement, Op Art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Ornate and Intricate",
-        "prompt": "Ornate and Intricate, {prompt}, decorative, highly detailed, elaborate, ornate, intricate",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Pencil Sketch Drawing",
-        "prompt": "Pencil Sketch Drawing, {prompt}, black and white drawing, graphite drawing",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Pop Art 2",
-        "prompt": "Pop Art, {prompt}, vivid colors, flat color, 2D, strong lines, Pop Art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, photo, realistic"
-    },
-    {
-        "name": "Rococo",
-        "prompt": "Rococo, {prompt}, flamboyant, pastel colors, curved lines, elaborate detail, Rococo",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Silhouette Art",
-        "prompt": "Silhouette Art, {prompt}, high contrast, well defined, Silhouette Art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Simple Vector Art",
-        "prompt": "Simple Vector Art, {prompt}, 2D flat, simple shapes, minimalistic, professional graphic, flat color, high contrast, Simple Vector Art",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, 3D, photo, realistic"
-    },
-    {
-        "name": "Sketchup",
-        "prompt": "Sketchup, {prompt}, CAD, professional design, Sketchup",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, photo, photograph"
-    },
-    {
-        "name": "Steampunk 2",
-        "prompt": "Steampunk, {prompt}, retrofuturistic science fantasy, steam-powered tech, vintage industry, gears, neo-victorian, steampunk",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Surrealism",
-        "prompt": "Surrealism, {prompt}, expressive, dramatic, organic lines and forms, dreamlike and mysterious, Surrealism",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, realistic"
-    },
-    {
-        "name": "Suprematism",
-        "prompt": "Suprematism, {prompt}, abstract, limited color palette, geometric forms, Suprematism",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, realistic"
-    },
-    {
-        "name": "Terragen",
-        "prompt": "Terragen, {prompt}, beautiful massive landscape, epic scenery, Terragen",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Tranquil Relaxing Atmosphere",
-        "prompt": "Tranquil Relaxing Atmosphere, {prompt}, calming style, soothing colors, peaceful, idealic, Tranquil Relaxing Atmosphere",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, oversaturated"
-    },
-    {
-        "name": "Sticker Designs",
-        "prompt": "Vector Art Stickers, {prompt}, professional vector design, sticker designs, Sticker Sheet",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Vibrant Rim Light",
-        "prompt": "Vibrant Rim Light, {prompt}, bright rim light, high contrast, bold edge light",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Volumetric Lighting",
-        "prompt": "Volumetric Lighting, {prompt}, light depth, dramatic atmospheric lighting, Volumetric Lighting",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast"
-    },
-    {
-        "name": "Watercolor 2",
-        "prompt": "Watercolor style painting, {prompt}, visible paper texture, colorwash, watercolor",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, photo, realistic"
-    },
-    {
-        "name": "Whimsical and Playful",
-        "prompt": "Whimsical and Playful, {prompt}, imaginative, fantastical, bight colors, stylized, happy, Whimsical and Playful",
-        "negative_prompt": "ugly, deformed, noisy, blurry, low contrast, drab, boring, moody"
-    }
+import random
+import gradio as gr
+
+# ======= Ultra Realistic 8K Photography Options =======
+celebs_options = [
+    "Ariana Grande", "Nicki Minaj", "Dua Lipa", "Megan Fox", "Salma Hayek",
+    "Penélope Cruz", "Scarlett Johansson", "Margot Robbie", "Shakira", "Karol G",
+    "Becky G", "Camila Cabello", "Katy Perry", "Jennifer Lopez", "Sofía Vergara",
+    "Emma Watson", "Gal Gadot", "Zendaya", "Taylor Swift", "Beyoncé"
 ]
+
+def get_random_fashion_elements():
+    return {
+        "models": [
+            {
+                "name": "Fashion Model", 
+                "hair": "perfectly styled hair with natural movement",
+                "eyes": "crystal clear eyes with detailed iris patterns",
+                "body": "balanced proportions with natural posture",
+                "skin": "flawless skin with realistic pores and subtle texture",
+                "face": "symmetrical facial features with natural makeup"
+            },
+            {
+                "name": "Runway Model", 
+                "hair": "editorial hairstyle with volume and shine",
+                "eyes": "expressive eyes with perfect catchlights",
+                "body": "elegant stance with perfect posture",
+                "skin": "natural skin texture with soft highlights",
+                "face": "high-fashion bone structure"
+            }
+        ],
+
+        "outfits": [
+            {
+                "type": "designer evening gown",
+                "description": "flowing fabric with intricate draping",
+                "details": "couture stitching visible, luxury fabric texture",
+                "brand": random.choice(["Dior", "Chanel", "Versace", "Valentino", "Armani"])
+            },
+            {
+                "type": "tailored pantsuit",
+                "description": "sharp lines with perfect fit",
+                "details": "visible stitching details, premium fabric drape",
+                "brand": random.choice(["Gucci", "Saint Laurent", "Balmain", "Tom Ford", "Prada"])
+            },
+            {
+                "type": "red carpet dress",
+                "description": "show-stopping designer piece",
+                "details": "intricate beadwork visible, fabric movement captured",
+                "brand": random.choice(["Elie Saab", "Zuhair Murad", "Oscar de la Renta", "Carolina Herrera", "Givenchy"])
+            }
+        ],
+
+        "poses": [
+            {
+                "name": "Runway Walk",
+                "description": "mid-stride pose with perfect form",
+                "details": [
+                    "natural body movement captured",
+                    "perfect balance and posture",
+                    "fabric flowing naturally",
+                    "confident facial expression",
+                    "arms positioned elegantly"
+                ]
+            },
+            {
+                "name": "Editorial Pose",
+                "description": "high-fashion stance",
+                "details": [
+                    "dynamic body angles",
+                    "expressive hand positioning",
+                    "strong eye contact with camera",
+                    "perfect body tension",
+                    "natural weight distribution"
+                ]
+            },
+            {
+                "name": "Red Carpet Pose",
+                "description": "classic celebrity stance",
+                "details": [
+                    "one hand on hip",
+                    "slight weight shift to back leg",
+                    "perfect smile expression",
+                    "body angled 45 degrees to camera",
+                    "outfit displayed perfectly"
+                ]
+            }
+        ],
+
+        "lighting": [
+            {
+                "type": "studio lighting",
+                "setup": "professional 5-point lighting",
+                "details": [
+                    "main key light with softbox",
+                    "fill light for perfect shadow control",
+                    "hair light for separation",
+                    "rim light for definition",
+                    "background light for depth"
+                ]
+            },
+            {
+                "type": "natural lighting",
+                "setup": "golden hour sunlight",
+                "details": [
+                    "soft directional sunlight",
+                    "natural fill from environment",
+                    "perfect shadow gradient",
+                    "warm color temperature",
+                    "atmospheric depth"
+                ]
+            },
+            {
+                "type": "cinematic lighting",
+                "setup": "dramatic movie lighting",
+                "details": [
+                    "high contrast ratios",
+                    "precise light shaping",
+                    "moody shadows",
+                    "specular highlights",
+                    "depth-creating backlight"
+                ]
+            }
+        ],
+
+        "locations": [
+            {
+                "setting": "fashion studio",
+                "details": [
+                    "seamless white background",
+                    "professional equipment visible",
+                    "clean minimalist space",
+                    "perfect lighting conditions",
+                    "high-end camera setup"
+                ]
+            },
+            {
+                "setting": "urban rooftop",
+                "details": [
+                    "city skyline backdrop",
+                    "modern architecture",
+                    "golden hour lighting",
+                    "clean lines and surfaces",
+                    "depth from environment"
+                ]
+            },
+            {
+                "setting": "luxury penthouse",
+                "details": [
+                    "designer furniture",
+                    "floor-to-ceiling windows",
+                    "high-end decor",
+                    "natural light flooding in",
+                    "spacious clean environment"
+                ]
+            }
+        ]
+    }
+
+technical_specs = (
+    "8K ultra HD resolution, 100 megapixels, hyper-detailed photography, "
+    "Phase One XT camera with 150MP IQ4 digital back, "
+    "Schneider Kreuznach lenses, f/8 aperture for perfect sharpness, "
+    "studio lighting setup with Profoto Pro-11 packs, "
+    "captured in RAW format with 16-bit color depth, "
+    "perfect skin texture with visible pores but no imperfections, "
+    "fabric textures rendered with micro-detail, "
+    "natural color grading with perfect white balance, "
+    "sharp focus on subject with smooth bokeh, "
+    "professional retouching while maintaining natural look, "
+    "commercial fashion photography quality"
+)
+
+def generate_photography_prompt():
+    elements = get_random_fashion_elements()
+    celebrity = random.choice(celebs_options)
+    model = random.choice(elements["models"])
+    outfit = random.choice(elements["outfits"])
+    pose = random.choice(elements["poses"])
+    lighting = random.choice(elements["lighting"])
+    location = random.choice(elements["locations"])
+    
+    prompt = (
+        f"Ultra-realistic 8K full-body fashion photograph of {celebrity}, "
+        f"a {model['name']} with {model['hair']}, {model['eyes']}, {model['skin']}, and {model['face']}. "
+        f"Wearing a {outfit['brand']} {outfit['type']}: {outfit['description']} showing {outfit['details']}. "
+        f"{pose['description'].capitalize()} with {', '.join(pose['details'])}. "
+        f"Lighting: {lighting['type']} setup with {', '.join(lighting['details'])}. "
+        f"Location: {location['setting']} featuring {', '.join(location['details'])}. "
+        f"{technical_specs}"
+    )
+    
+    return prompt, celebrity
+
+with gr.Blocks(title="Fashion Photography Prompt Generator") as demo:
+    gr.Markdown("""# 📸 Ultra Realistic 8K Fashion Photography Prompt Generator
+    *Generate prompts for hyper-realistic celebrity fashion photography*""")
+    
+    with gr.Row():
+        with gr.Column():
+            generate_btn = gr.Button("✨ Generate Photography Prompt", variant="primary")
+            
+        with gr.Column():
+            celebrity_display = gr.Textbox(label="Selected Celebrity")
+            prompt_output = gr.Textbox(label="Photography Prompt", lines=8)
+    
+    generate_btn.click(
+        fn=generate_photography_prompt,
+        outputs=[prompt_output, celebrity_display]
+    )
+
+demo.launch()
