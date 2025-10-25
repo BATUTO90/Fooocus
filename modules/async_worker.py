@@ -8,7 +8,12 @@ patch_all()
 
 
 class AsyncTask:
+    """Represents a task for asynchronous image generation."""
     def __init__(self, args):
+        """Initializes an AsyncTask object.
+        Args:
+            args (list): A list of arguments for the task.
+        """
         from modules.flags import Performance, MetadataScheme, ip_list, disabled
         from modules.util import get_enabled_loras
         from modules.config import default_max_lora_number
@@ -162,10 +167,12 @@ async_tasks = []
 
 
 class EarlyReturnException(BaseException):
+    """An exception that is used to signal an early return from a task."""
     pass
 
 
 def worker():
+    """The main worker function that processes asynchronous tasks."""
     global async_tasks
 
     import os

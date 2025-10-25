@@ -12,6 +12,7 @@ pause
 
 
 def build_launcher():
+    """Builds the launcher scripts for Windows."""
     if not is_win32_standalone_build:
         return
 

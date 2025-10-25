@@ -10,4 +10,11 @@ progress_html = '''
 
 
 def make_progress_html(number, text):
+    """Creates an HTML progress bar.
+    Args:
+        number (int): The progress value.
+        text (str): The progress text.
+    Returns:
+        str: The HTML code for the progress bar.
+    """
     return progress_html.replace('*number*', str(number)).replace('*text*', text)

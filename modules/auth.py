@@ -6,6 +6,12 @@ from os.path import exists
 
 
 def auth_list_to_dict(auth_list):
+    """Converts a list of authentication data to a dictionary.
+    Args:
+        auth_list (list): A list of dictionaries, where each dictionary contains a 'user' and either a 'hash' or a 'pass'.
+    Returns:
+        dict: A dictionary where the keys are usernames and the values are password hashes.
+    """
     auth_dict = {}
     for auth_data in auth_list:
         if 'user' in auth_data:
@@ -17,6 +23,12 @@ def auth_list_to_dict(auth_list):
 
 
 def load_auth_data(filename=None):
+    """Loads authentication data from a JSON file.
+    Args:
+        filename (str, optional): The name of the authentication file. Defaults to None.
+    Returns:
+        dict or None: A dictionary of authentication data, or None if the file cannot be loaded.
+    """
     auth_dict = None
     if filename != None and exists(filename):
         with open(filename, encoding='utf-8') as auth_file:
@@ -35,6 +47,13 @@ auth_enabled = auth_dict != None
 
 
 def check_auth(user, password):
+    """Checks if a user's password is correct.
+    Args:
+        user (str): The username.
+        password (str): The password.
+    Returns:
+        bool: True if the password is correct, False otherwise.
+    """
     if user not in auth_dict:
         return False
     else:   

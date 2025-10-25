@@ -461,6 +461,13 @@ if not hasattr(Block, 'original__init__'):
 
 
 def blk_ini(self, *args, **kwargs):
+    """Initializes a block.
+    Args:
+        *args: The arguments to pass to the original __init__ method.
+        **kwargs: The keyword arguments to pass to the original __init__ method.
+    Returns:
+        The result of the original __init__ method.
+    """
     all_components.append(self)
     return Block.original_init(self, *args, **kwargs)
 
@@ -475,6 +482,13 @@ if not hasattr(gradio.routes.asyncio, 'original_wait_for'):
 
 
 def patched_wait_for(fut, timeout):
+    """A patched version of asyncio.wait_for that uses a longer timeout.
+    Args:
+        fut: The future to wait for.
+        timeout: The timeout value.
+    Returns:
+        The result of the original wait_for function.
+    """
     del timeout
     return gradio.routes.asyncio.original_wait_for(fut, timeout=65535)
 

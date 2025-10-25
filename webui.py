@@ -25,12 +25,22 @@ from modules.auth import auth_enabled, check_auth
 from modules.util import is_json
 
 def get_task(*args):
+    """Gets a task from the arguments.
+    Args:
+        *args: The arguments.
+    Returns:
+        worker.AsyncTask: The task.
+    """
     args = list(args)
     args.pop(0)
 
     return worker.AsyncTask(args=args)
 
 def generate_clicked(task: worker.AsyncTask):
+    """Handles the generate button click.
+    Args:
+        task (worker.AsyncTask): The task to run.
+    """
     import ldm_patched.modules.model_management as model_management
 
     with model_management.interrupt_processing_mutex:
@@ -94,6 +104,13 @@ def generate_clicked(task: worker.AsyncTask):
 
 
 def sort_enhance_images(images, task):
+    """Sorts the enhanced images.
+    Args:
+        images (list): The images to sort.
+        task (worker.AsyncTask): The task.
+    Returns:
+        list: The sorted images.
+    """
     if not task.should_enhance or len(images) <= task.images_to_enhance_count:
         return images
 
@@ -113,6 +130,13 @@ def sort_enhance_images(images, task):
 
 
 def inpaint_mode_change(mode, inpaint_engine_version):
+    """Handles the inpaint mode change.
+    Args:
+        mode (str): The inpaint mode.
+        inpaint_engine_version (str): The inpaint engine version.
+    Returns:
+        list: A list of gradio updates.
+    """
     assert mode in modules.flags.inpaint_options
 
     # inpaint_additional_prompt, outpaint_selections, example_inpaint_prompts,
@@ -1111,6 +1135,7 @@ with shared.gradio_root:
                 .then(lambda: None, _js='()=>{refresh_style_localization();}')
 
 def dump_default_english_config():
+    """Dumps the default English config."""
     from modules.localization import dump_english_config
     dump_english_config(grh.all_components)
 
