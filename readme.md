@@ -452,6 +452,17 @@ Also, thanks [daswer123](https://github.com/daswer123) for contributing the Canv
 
 The log is [here](update_log.md).
 
+## Codebase Overview
+
+The Fooocus codebase is organized into several directories, each with a specific purpose. Here's a brief overview of the most important ones:
+
+*   **`modules/`**: This directory contains the core logic of the application. It includes modules for image generation (`core.py`), configuration management (`config.py`), model loading (`model_loader.py`), and more.
+*   **`ldm_patched/`**: This directory contains a patched version of the Latent Diffusion Model (LDM) library. The patches are used to improve performance and add new features.
+*   **`webui.py`**: This is the main script for the web user interface. It uses the Gradio library to create the UI components and handle user interactions.
+*   **`launch.py`**: This script is responsible for launching the application. It prepares the environment, downloads the necessary models, and starts the web UI.
+
+The application works by taking user input from the web UI, processing it in the `modules/` directory, and then using the `ldm_patched/` library to generate images. The `webui.py` script then displays the generated images to the user.
+
 ## Localization/Translation/I18N
 
 You can put json files in the `language` folder to translate the user interface.

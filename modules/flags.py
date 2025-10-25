@@ -108,6 +108,7 @@ sdxl_aspect_ratios = [
 
 
 class MetadataScheme(Enum):
+    """An enumeration of the available metadata schemes."""
     FOOOCUS = 'fooocus'
     A1111 = 'a1111'
 
@@ -119,16 +120,22 @@ metadata_scheme = [
 
 
 class OutputFormat(Enum):
+    """An enumeration of the available output formats."""
     PNG = 'png'
     JPEG = 'jpeg'
     WEBP = 'webp'
 
     @classmethod
     def list(cls) -> list:
+        """Returns a list of the available output formats.
+        Returns:
+            list: A list of the available output formats.
+        """
         return list(map(lambda c: c.value, cls))
 
 
 class PerformanceLoRA(Enum):
+    """An enumeration of the available performance LoRAs."""
     QUALITY = None
     SPEED = None
     EXTREME_SPEED = 'sdxl_lcm_lora.safetensors'
@@ -137,6 +144,7 @@ class PerformanceLoRA(Enum):
 
 
 class Steps(IntEnum):
+    """An enumeration of the available steps for each performance level."""
     QUALITY = 60
     SPEED = 30
     EXTREME_SPEED = 8
@@ -145,10 +153,15 @@ class Steps(IntEnum):
 
     @classmethod
     def keys(cls) -> list:
+        """Returns a list of the available steps keys.
+        Returns:
+            list: A list of the available steps keys.
+        """
         return list(map(lambda c: c, Steps.__members__))
 
 
 class StepsUOV(IntEnum):
+    """An enumeration of the available steps for upscale or variation for each performance level."""
     QUALITY = 36
     SPEED = 18
     EXTREME_SPEED = 8
@@ -157,6 +170,7 @@ class StepsUOV(IntEnum):
 
 
 class Performance(Enum):
+    """An enumeration of the available performance levels."""
     QUALITY = 'Quality'
     SPEED = 'Speed'
     EXTREME_SPEED = 'Extreme Speed'
@@ -165,27 +179,59 @@ class Performance(Enum):
 
     @classmethod
     def list(cls) -> list:
+        """Returns a list of the available performance levels.
+        Returns:
+            list: A list of the available performance levels.
+        """
         return list(map(lambda c: (c.name, c.value), cls))
 
     @classmethod
     def values(cls) -> list:
+        """Returns a list of the available performance level values.
+        Returns:
+            list: A list of the available performance level values.
+        """
         return list(map(lambda c: c.value, cls))
 
     @classmethod
     def by_steps(cls, steps: int | str):
+        """Returns a performance level by the number of steps.
+        Args:
+            steps (int or str): The number of steps.
+        Returns:
+            Performance: The performance level.
+        """
         return cls[Steps(int(steps)).name]
 
     @classmethod
     def has_restricted_features(cls, x) -> bool:
+        """Checks if a performance level has restricted features.
+        Args:
+            x: The performance level.
+        Returns:
+            bool: True if the performance level has restricted features, False otherwise.
+        """
         if isinstance(x, Performance):
             x = x.value
         return x in [cls.EXTREME_SPEED.value, cls.LIGHTNING.value, cls.HYPER_SD.value]
 
     def steps(self) -> int | None:
+        """Returns the number of steps for the performance level.
+        Returns:
+            int or None: The number of steps for the performance level, or None if it is not defined.
+        """
         return Steps[self.name].value if self.name in Steps.__members__ else None
 
     def steps_uov(self) -> int | None:
+        """Returns the number of steps for upscale or variation for the performance level.
+        Returns:
+            int or None: The number of steps for upscale or variation for the performance level, or None if it is not defined.
+        """
         return StepsUOV[self.name].value if self.name in StepsUOV.__members__ else None
 
     def lora_filename(self) -> str | None:
+        """Returns the LoRA filename for the performance level.
+        Returns:
+            str or None: The LoRA filename for the performance level, or None if it is not defined.
+        """
         return PerformanceLoRA[self.name].value if self.name in PerformanceLoRA.__members__ else None

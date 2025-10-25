@@ -6,6 +6,7 @@ import torch
 import sys
 
 class VRAMState(Enum):
+    """An enumeration of the available VRAM states."""
     DISABLED = 0    #No vram present: no need to move models to vram
     NO_VRAM = 1     #Very low vram: enable all the options to save vram
     LOW_VRAM = 2
@@ -14,6 +15,7 @@ class VRAMState(Enum):
     SHARED = 5      #No dedicated vram: memory shared between CPU and GPU but models still need to be moved between both.
 
 class CPUState(Enum):
+    """An enumeration of the available CPU states."""
     GPU = 0
     CPU = 1
     MPS = 2
@@ -66,6 +68,10 @@ if args.always_cpu:
     cpu_state = CPUState.CPU
 
 def is_intel_xpu():
+    """Checks if an Intel XPU is available.
+    Returns:
+        bool: True if an Intel XPU is available, False otherwise.
+    """
     global cpu_state
     global xpu_available
     if cpu_state == CPUState.GPU:
@@ -74,6 +80,10 @@ def is_intel_xpu():
     return False
 
 def get_torch_device():
+    """Gets the torch device.
+    Returns:
+        torch.device: The torch device.
+    """
     global directml_enabled
     global cpu_state
     if directml_enabled:
@@ -90,6 +100,13 @@ def get_torch_device():
             return torch.device(torch.cuda.current_device())
 
 def get_total_memory(dev=None, torch_total_too=False):
+    """Gets the total memory of a device.
+    Args:
+        dev (torch.device, optional): The device. Defaults to None.
+        torch_total_too (bool, optional): Whether to also return the total memory as reported by torch. Defaults to False.
+    Returns:
+        int or tuple[int, int]: The total memory of the device, or a tuple of the total memory and the total memory as reported by torch.
+    """
     global directml_enabled
     if dev is None:
         dev = get_torch_device()
@@ -159,6 +176,10 @@ else:
         XFORMERS_IS_AVAILABLE = False
 
 def is_nvidia():
+    """Checks if an NVIDIA GPU is available.
+    Returns:
+        bool: True if an NVIDIA GPU is available, False otherwise.
+    """
     global cpu_state
     if cpu_state == CPUState.GPU:
         if torch.version.cuda:
@@ -242,6 +263,12 @@ if ALWAYS_VRAM_OFFLOAD:
     print("Always offload VRAM")
 
 def get_torch_device_name(device):
+    """Gets the name of a torch device.
+    Args:
+        device (torch.device): The device.
+    Returns:
+        str: The name of the device.
+    """
     if hasattr(device, 'type'):
         if device.type == "cuda":
             try:
@@ -266,6 +293,12 @@ print("VAE dtype:", VAE_DTYPE)
 current_loaded_models = []
 
 def module_size(module):
+    """Gets the size of a module in bytes.
+    Args:
+        module (torch.nn.Module): The module.
+    Returns:
+        int: The size of the module in bytes.
+    """
     module_mem = 0
     sd = module.state_dict()
     for k in sd:
@@ -274,21 +307,42 @@ def module_size(module):
     return module_mem
 
 class LoadedModel:
+    """A class that represents a loaded model."""
     def __init__(self, model):
+        """Initializes a LoadedModel.
+        Args:
+            model: The model.
+        """
         self.model = model
         self.model_accelerated = False
         self.device = model.load_device
 
     def model_memory(self):
+        """Gets the memory usage of the model.
+        Returns:
+            int: The memory usage of the model in bytes.
+        """
         return self.model.model_size()
 
     def model_memory_required(self, device):
+        """Gets the memory required to load the model on a device.
+        Args:
+            device (torch.device): The device.
+        Returns:
+            int: The memory required to load the model on the device in bytes.
+        """
         if device == self.model.current_device:
             return 0
         else:
             return self.model_memory()
 
     def model_load(self, lowvram_model_memory=0):
+        """Loads the model.
+        Args:
+            lowvram_model_memory (int, optional): The amount of memory to reserve for low VRAM mode. Defaults to 0.
+        Returns:
+            The loaded model.
+        """
         patch_model_to = None
         if lowvram_model_memory == 0:
             patch_model_to = self.device
@@ -327,6 +381,7 @@ class LoadedModel:
         return self.real_model
 
     def model_unload(self):
+        """Unloads the model."""
         if self.model_accelerated:
             for m in self.real_model.modules():
                 if hasattr(m, "prev_ldm_patched_cast_weights"):
@@ -342,9 +397,17 @@ class LoadedModel:
         return self.model is other.model
 
 def minimum_inference_memory():
+    """Gets the minimum memory required for inference.
+    Returns:
+        int: The minimum memory required for inference in bytes.
+    """
     return (1024 * 1024 * 1024)
 
 def unload_model_clones(model):
+    """Unloads all clones of a model.
+    Args:
+        model: The model.
+    """
     to_unload = []
     for i in range(len(current_loaded_models)):
         if model.is_clone(current_loaded_models[i].model):
@@ -355,6 +418,12 @@ def unload_model_clones(model):
         current_loaded_models.pop(i).model_unload()
 
 def free_memory(memory_required, device, keep_loaded=[]):
+    """Frees memory by unloading models.
+    Args:
+        memory_required (int): The amount of memory required.
+        device (torch.device): The device to free memory on.
+        keep_loaded (list, optional): A list of models to keep loaded. Defaults to [].
+    """
     unloaded_model = False
     for i in range(len(current_loaded_models) -1, -1, -1):
         if not ALWAYS_VRAM_OFFLOAD:
@@ -377,6 +446,11 @@ def free_memory(memory_required, device, keep_loaded=[]):
                 soft_empty_cache()
 
 def load_models_gpu(models, memory_required=0):
+    """Loads a list of models on the GPU.
+    Args:
+        models (list): A list of models to load.
+        memory_required (int, optional): The amount of memory required. Defaults to 0.
+    """
     global vram_state
 
     inference_memory = minimum_inference_memory()
@@ -440,9 +514,16 @@ def load_models_gpu(models, memory_required=0):
 
 
 def load_model_gpu(model):
+    """Loads a model on the GPU.
+    Args:
+        model: The model to load.
+    Returns:
+        The loaded model.
+    """
     return load_models_gpu([model])
 
 def cleanup_models():
+    """Cleans up unused models."""
     to_delete = []
     for i in range(len(current_loaded_models)):
         if sys.getrefcount(current_loaded_models[i].model) <= 2:
@@ -454,6 +535,12 @@ def cleanup_models():
         del x
 
 def dtype_size(dtype):
+    """Gets the size of a dtype in bytes.
+    Args:
+        dtype: The dtype.
+    Returns:
+        int: The size of the dtype in bytes.
+    """
     dtype_size = 4
     if dtype == torch.float16 or dtype == torch.bfloat16:
         dtype_size = 2
@@ -467,12 +554,23 @@ def dtype_size(dtype):
     return dtype_size
 
 def unet_offload_device():
+    """Gets the device to offload the UNet to.
+    Returns:
+        torch.device: The device to offload the UNet to.
+    """
     if vram_state == VRAMState.HIGH_VRAM:
         return get_torch_device()
     else:
         return torch.device("cpu")
 
 def unet_inital_load_device(parameters, dtype):
+    """Gets the initial device to load the UNet on.
+    Args:
+        parameters: The parameters of the UNet.
+        dtype: The dtype of the UNet.
+    Returns:
+        torch.device: The initial device to load the UNet on.
+    """
     torch_dev = get_torch_device()
     if vram_state == VRAMState.HIGH_VRAM:
         return torch_dev
@@ -491,6 +589,13 @@ def unet_inital_load_device(parameters, dtype):
         return cpu_dev
 
 def unet_dtype(device=None, model_params=0):
+    """Gets the dtype for the UNet.
+    Args:
+        device (torch.device, optional): The device. Defaults to None.
+        model_params (int, optional): The number of parameters in the model. Defaults to 0.
+    Returns:
+        torch.dtype: The dtype for the UNet.
+    """
     if args.unet_in_bf16:
         return torch.bfloat16
     if args.unet_in_fp16:
@@ -505,6 +610,13 @@ def unet_dtype(device=None, model_params=0):
 
 # None means no manual cast
 def unet_manual_cast(weight_dtype, inference_device):
+    """Gets the manual cast for the UNet.
+    Args:
+        weight_dtype: The weight dtype of the UNet.
+        inference_device (torch.device): The inference device.
+    Returns:
+        torch.dtype or None: The manual cast for the UNet, or None if no manual cast is needed.
+    """
     if weight_dtype == torch.float32:
         return None
 
@@ -518,12 +630,20 @@ def unet_manual_cast(weight_dtype, inference_device):
         return torch.float32
 
 def text_encoder_offload_device():
+    """Gets the device to offload the text encoder to.
+    Returns:
+        torch.device: The device to offload the text encoder to.
+    """
     if args.always_gpu:
         return get_torch_device()
     else:
         return torch.device("cpu")
 
 def text_encoder_device():
+    """Gets the device for the text encoder.
+    Returns:
+        torch.device: The device for the text encoder.
+    """
     if args.always_gpu:
         return get_torch_device()
     elif vram_state == VRAMState.HIGH_VRAM or vram_state == VRAMState.NORMAL_VRAM:
@@ -537,6 +657,12 @@ def text_encoder_device():
         return torch.device("cpu")
 
 def text_encoder_dtype(device=None):
+    """Gets the dtype for the text encoder.
+    Args:
+        device (torch.device, optional): The device. Defaults to None.
+    Returns:
+        torch.dtype: The dtype for the text encoder.
+    """
     if args.clip_in_fp8_e4m3fn:
         return torch.float8_e4m3fn
     elif args.clip_in_fp8_e5m2:
@@ -555,32 +681,61 @@ def text_encoder_dtype(device=None):
         return torch.float32
 
 def intermediate_device():
+    """Gets the intermediate device.
+    Returns:
+        torch.device: The intermediate device.
+    """
     if args.always_gpu:
         return get_torch_device()
     else:
         return torch.device("cpu")
 
 def vae_device():
+    """Gets the device for the VAE.
+    Returns:
+        torch.device: The device for the VAE.
+    """
     if args.vae_in_cpu:
         return torch.device("cpu")
     return get_torch_device()
 
 def vae_offload_device():
+    """Gets the device to offload the VAE to.
+    Returns:
+        torch.device: The device to offload the VAE to.
+    """
     if args.always_gpu:
         return get_torch_device()
     else:
         return torch.device("cpu")
 
 def vae_dtype():
+    """Gets the dtype for the VAE.
+    Returns:
+        torch.dtype: The dtype for the VAE.
+    """
     global VAE_DTYPE
     return VAE_DTYPE
 
 def get_autocast_device(dev):
+    """Gets the autocast device for a device.
+    Args:
+        dev (torch.device): The device.
+    Returns:
+        str: The autocast device.
+    """
     if hasattr(dev, 'type'):
         return dev.type
     return "cuda"
 
 def supports_dtype(device, dtype): #TODO
+    """Checks if a device supports a dtype.
+    Args:
+        device (torch.device): The device.
+        dtype: The dtype.
+    Returns:
+        bool: True if the device supports the dtype, False otherwise.
+    """
     if dtype == torch.float32:
         return True
     if is_device_cpu(device):
@@ -592,11 +747,26 @@ def supports_dtype(device, dtype): #TODO
     return False
 
 def device_supports_non_blocking(device):
+    """Checks if a device supports non-blocking operations.
+    Args:
+        device (torch.device): The device.
+    Returns:
+        bool: True if the device supports non-blocking operations, False otherwise.
+    """
     if is_device_mps(device):
         return False #pytorch bug? mps doesn't support non blocking
     return True
 
 def cast_to_device(tensor, device, dtype, copy=False):
+    """Casts a tensor to a device and dtype.
+    Args:
+        tensor: The tensor to cast.
+        device (torch.device): The device to cast to.
+        dtype: The dtype to cast to.
+        copy (bool, optional): Whether to copy the tensor. Defaults to False.
+    Returns:
+        The cast tensor.
+    """
     device_supports_cast = False
     if tensor.dtype == torch.float32 or tensor.dtype == torch.float16:
         device_supports_cast = True
@@ -619,6 +789,10 @@ def cast_to_device(tensor, device, dtype, copy=False):
         return tensor.to(device, dtype, copy=copy, non_blocking=non_blocking)
 
 def xformers_enabled():
+    """Checks if xformers is enabled.
+    Returns:
+        bool: True if xformers is enabled, False otherwise.
+    """
     global directml_enabled
     global cpu_state
     if cpu_state != CPUState.GPU:
@@ -631,6 +805,10 @@ def xformers_enabled():
 
 
 def xformers_enabled_vae():
+    """Checks if xformers is enabled for the VAE.
+    Returns:
+        bool: True if xformers is enabled for the VAE, False otherwise.
+    """
     enabled = xformers_enabled()
     if not enabled:
         return False
@@ -638,10 +816,18 @@ def xformers_enabled_vae():
     return XFORMERS_ENABLED_VAE
 
 def pytorch_attention_enabled():
+    """Checks if PyTorch attention is enabled.
+    Returns:
+        bool: True if PyTorch attention is enabled, False otherwise.
+    """
     global ENABLE_PYTORCH_ATTENTION
     return ENABLE_PYTORCH_ATTENTION
 
 def pytorch_attention_flash_attention():
+    """Checks if PyTorch flash attention is enabled.
+    Returns:
+        bool: True if PyTorch flash attention is enabled, False otherwise.
+    """
     global ENABLE_PYTORCH_ATTENTION
     if ENABLE_PYTORCH_ATTENTION:
         #TODO: more reliable way of checking for flash attention?
@@ -650,6 +836,13 @@ def pytorch_attention_flash_attention():
     return False
 
 def get_free_memory(dev=None, torch_free_too=False):
+    """Gets the free memory of a device.
+    Args:
+        dev (torch.device, optional): The device. Defaults to None.
+        torch_free_too (bool, optional): Whether to also return the free memory as reported by torch. Defaults to False.
+    Returns:
+        int or tuple[int, int]: The free memory of the device, or a tuple of the free memory and the free memory as reported by torch.
+    """
     global directml_enabled
     if dev is None:
         dev = get_torch_device()
@@ -682,26 +875,54 @@ def get_free_memory(dev=None, torch_free_too=False):
         return mem_free_total
 
 def cpu_mode():
+    """Checks if the CPU is in CPU mode.
+    Returns:
+        bool: True if the CPU is in CPU mode, False otherwise.
+    """
     global cpu_state
     return cpu_state == CPUState.CPU
 
 def mps_mode():
+    """Checks if the CPU is in MPS mode.
+    Returns:
+        bool: True if the CPU is in MPS mode, False otherwise.
+    """
     global cpu_state
     return cpu_state == CPUState.MPS
 
 def is_device_cpu(device):
+    """Checks if a device is a CPU.
+    Args:
+        device (torch.device): The device.
+    Returns:
+        bool: True if the device is a CPU, False otherwise.
+    """
     if hasattr(device, 'type'):
         if (device.type == 'cpu'):
             return True
     return False
 
 def is_device_mps(device):
+    """Checks if a device is an MPS device.
+    Args:
+        device (torch.device): The device.
+    Returns:
+        bool: True if the device is an MPS device, False otherwise.
+    """
     if hasattr(device, 'type'):
         if (device.type == 'mps'):
             return True
     return False
 
 def should_use_fp16(device=None, model_params=0, prioritize_performance=True):
+    """Checks if fp16 should be used.
+    Args:
+        device (torch.device, optional): The device. Defaults to None.
+        model_params (int, optional): The number of parameters in the model. Defaults to 0.
+        prioritize_performance (bool, optional): Whether to prioritize performance. Defaults to True.
+    Returns:
+        bool: True if fp16 should be used, False otherwise.
+    """
     global directml_enabled
 
     if device is not None:
@@ -760,6 +981,10 @@ def should_use_fp16(device=None, model_params=0, prioritize_performance=True):
     return True
 
 def soft_empty_cache(force=False):
+    """Softly empties the cache.
+    Args:
+        force (bool, optional): Whether to force the cache to be emptied. Defaults to False.
+    """
     global cpu_state
     if cpu_state == CPUState.MPS:
         torch.mps.empty_cache()
@@ -771,34 +996,53 @@ def soft_empty_cache(force=False):
             torch.cuda.ipc_collect()
 
 def unload_all_models():
+    """Unloads all models."""
     free_memory(1e30, get_torch_device())
 
 
 def resolve_lowvram_weight(weight, model, key): #TODO: remove
+    """Resolves the low VRAM weight.
+    Args:
+        weight: The weight.
+        model: The model.
+        key: The key.
+    Returns:
+        The resolved low VRAM weight.
+    """
     return weight
 
 #TODO: might be cleaner to put this somewhere else
 import threading
 
 class InterruptProcessingException(Exception):
+    """An exception that is raised when processing is interrupted."""
     pass
 
 interrupt_processing_mutex = threading.RLock()
 
 interrupt_processing = False
 def interrupt_current_processing(value=True):
+    """Interrupts the current processing.
+    Args:
+        value (bool, optional): The value to set the interrupt flag to. Defaults to True.
+    """
     global interrupt_processing
     global interrupt_processing_mutex
     with interrupt_processing_mutex:
         interrupt_processing = value
 
 def processing_interrupted():
+    """Checks if processing has been interrupted.
+    Returns:
+        bool: True if processing has been interrupted, False otherwise.
+    """
     global interrupt_processing
     global interrupt_processing_mutex
     with interrupt_processing_mutex:
         return interrupt_processing
 
 def throw_exception_if_processing_interrupted():
+    """Throws an exception if processing has been interrupted."""
     global interrupt_processing
     global interrupt_processing_mutex
     with interrupt_processing_mutex:

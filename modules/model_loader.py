@@ -10,9 +10,14 @@ def load_file_from_url(
         progress: bool = True,
         file_name: Optional[str] = None,
 ) -> str:
-    """Download a file from `url` into `model_dir`, using the file present if possible.
-
-    Returns the path to the downloaded file.
+    """Downloads a file from a URL and saves it to a directory.
+    Args:
+        url (str): The URL of the file to download.
+        model_dir (str): The directory to save the file to.
+        progress (bool, optional): Whether to display a progress bar. Defaults to True.
+        file_name (str, optional): The name of the file to save. Defaults to None.
+    Returns:
+        str: The path to the downloaded file.
     """
     domain = os.environ.get("HF_MIRROR", "https://huggingface.co").rstrip('/')
     url = str.replace(url, "https://huggingface.co", domain, 1)

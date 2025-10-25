@@ -14,6 +14,13 @@ from modules.flags import OutputFormat, Performance, MetadataScheme
 
 
 def get_config_path(key, default_value):
+    """Gets a configuration path from an environment variable or returns a default value.
+    Args:
+        key (str): The name of the environment variable.
+        default_value (str): The default value to use if the environment variable is not set.
+    Returns:
+        str: The configuration path.
+    """
     env = os.getenv(key)
     if env is not None and isinstance(env, str):
         print(f"Environment: {key} = {env}")
@@ -50,6 +57,7 @@ except Exception as e:
 
 
 def try_load_deprecated_user_path_config():
+    """Loads a deprecated user path configuration file if it exists and updates the main configuration dictionary."""
     global config_dict
 
     if not os.path.exists('user_path_config.txt'):
@@ -99,6 +107,10 @@ def try_load_deprecated_user_path_config():
 try_load_deprecated_user_path_config()
 
 def get_presets():
+    """Gets a list of available presets from the 'presets' directory.
+    Returns:
+        list: A list of preset names.
+    """
     preset_folder = 'presets'
     presets = ['initial']
     if not os.path.exists(preset_folder):
@@ -108,10 +120,17 @@ def get_presets():
     return presets + [f[:f.index(".json")] for f in os.listdir(preset_folder) if f.endswith('.json')]
 
 def update_presets():
+    """Updates the list of available presets."""
     global available_presets
     available_presets = get_presets()
 
 def try_get_preset_content(preset):
+    """Tries to load the content of a preset file.
+    Args:
+        preset (str): The name of the preset to load.
+    Returns:
+        dict: The content of the preset file as a dictionary, or an empty dictionary if the preset cannot be loaded.
+    """
     if isinstance(preset, str):
         preset_path = os.path.abspath(f'./presets/{preset}.json')
         try:
@@ -144,6 +163,15 @@ def get_path_output() -> str:
 
 
 def get_dir_or_set_default(key, default_value, as_array=False, make_directory=False):
+    """Gets a directory path from the configuration or sets a default value.
+    Args:
+        key (str): The key of the configuration item.
+        default_value (str or list): The default value to use.
+        as_array (bool, optional): Whether to return the path as an array. Defaults to False.
+        make_directory (bool, optional): Whether to create the directory if it doesn't exist. Defaults to False.
+    Returns:
+        str or list: The directory path(s).
+    """
     global config_dict, visited_keys, always_save_keys
 
     if key not in visited_keys:
@@ -205,6 +233,16 @@ path_outputs = get_path_output()
 
 
 def get_config_item_or_set_default(key, default_value, validator, disable_empty_as_none=False, expected_type=None):
+    """Gets a configuration item or sets a default value.
+    Args:
+        key (str): The key of the configuration item.
+        default_value: The default value to use.
+        validator (function): A function to validate the configuration item.
+        disable_empty_as_none (bool, optional): Whether to disable treating empty values as None. Defaults to False.
+        expected_type (type, optional): The expected type of the configuration item. Defaults to None.
+    Returns:
+        The configuration item.
+    """
     global config_dict, visited_keys
 
     if key not in visited_keys:
@@ -234,6 +272,13 @@ def get_config_item_or_set_default(key, default_value, validator, disable_empty_
 
 
 def init_temp_path(path: str | None, default_path: str) -> str:
+    """Initializes the temporary path.
+    Args:
+        path (str or None): The path to initialize.
+        default_path (str): The default path to use.
+    Returns:
+        str: The initialized temporary path.
+    """
     if args_manager.args.temp_path:
         path = args_manager.args.temp_path
 
@@ -765,6 +810,12 @@ if REWRITE_PRESET and isinstance(args_manager.args.preset, str):
 
 
 def add_ratio(x):
+    """Adds a ratio to a string that represents a resolution.
+    Args:
+        x (str): The resolution string (e.g., "1024*1024").
+    Returns:
+        str: The resolution string with the ratio appended (e.g., "1024×1024 <span style='color: grey;'> ❘ 1:1</span>").
+    """
     a, b = x.replace('*', ' ').split(' ')[:2]
     a, b = int(a), int(b)
     g = math.gcd(a, b)
@@ -798,6 +849,14 @@ wildcard_filenames = []
 
 
 def get_model_filenames(folder_paths, extensions=None, name_filter=None):
+    """Gets a list of model filenames from a list of folder paths.
+    Args:
+        folder_paths (list or str): A list of folder paths or a single folder path.
+        extensions (list, optional): A list of file extensions to include. Defaults to None.
+        name_filter (str, optional): A string to filter filenames by. Defaults to None.
+    Returns:
+        list: A list of model filenames.
+    """
     if extensions is None:
         extensions = ['.pth', '.ckpt', '.bin', '.safetensors', '.fooocus.patch']
     files = []
@@ -811,6 +870,7 @@ def get_model_filenames(folder_paths, extensions=None, name_filter=None):
 
 
 def update_files():
+    """Updates the lists of available model, LoRA, VAE, and wildcard filenames."""
     global model_filenames, lora_filenames, vae_filenames, wildcard_filenames, available_presets
     model_filenames = get_model_filenames(paths_checkpoints)
     lora_filenames = get_model_filenames(paths_loras)
@@ -821,6 +881,12 @@ def update_files():
 
 
 def downloading_inpaint_models(v):
+    """Downloads the inpainting models.
+    Args:
+        v (str): The version of the inpainting model to download.
+    Returns:
+        A tuple that contains the paths to the downloaded head and patch files.
+    """
     assert v in modules.flags.inpaint_engine_versions
 
     load_file_from_url(
@@ -859,6 +925,10 @@ def downloading_inpaint_models(v):
 
 
 def downloading_sdxl_lcm_lora():
+    """Downloads the SDXL LCM LoRA model.
+    Returns:
+        str: The filename of the downloaded LoRA model.
+    """
     load_file_from_url(
         url='https://huggingface.co/lllyasviel/misc/resolve/main/sdxl_lcm_lora.safetensors',
         model_dir=paths_loras[0],
@@ -868,6 +938,10 @@ def downloading_sdxl_lcm_lora():
 
 
 def downloading_sdxl_lightning_lora():
+    """Downloads the SDXL Lightning LoRA model.
+    Returns:
+        str: The filename of the downloaded LoRA model.
+    """
     load_file_from_url(
         url='https://huggingface.co/mashb1t/misc/resolve/main/sdxl_lightning_4step_lora.safetensors',
         model_dir=paths_loras[0],
@@ -877,6 +951,10 @@ def downloading_sdxl_lightning_lora():
 
 
 def downloading_sdxl_hyper_sd_lora():
+    """Downloads the SDXL Hyper SD LoRA model.
+    Returns:
+        str: The filename of the downloaded LoRA model.
+    """
     load_file_from_url(
         url='https://huggingface.co/mashb1t/misc/resolve/main/sdxl_hyper_sd_4step_lora.safetensors',
         model_dir=paths_loras[0],
@@ -886,6 +964,10 @@ def downloading_sdxl_hyper_sd_lora():
 
 
 def downloading_controlnet_canny():
+    """Downloads the ControlNet Canny model.
+    Returns:
+        str: The path to the downloaded ControlNet Canny model.
+    """
     load_file_from_url(
         url='https://huggingface.co/lllyasviel/misc/resolve/main/control-lora-canny-rank128.safetensors',
         model_dir=path_controlnet,
@@ -895,6 +977,10 @@ def downloading_controlnet_canny():
 
 
 def downloading_controlnet_cpds():
+    """Downloads the ControlNet CPDS model.
+    Returns:
+        str: The path to the downloaded ControlNet CPDS model.
+    """
     load_file_from_url(
         url='https://huggingface.co/lllyasviel/misc/resolve/main/fooocus_xl_cpds_128.safetensors',
         model_dir=path_controlnet,
@@ -904,6 +990,12 @@ def downloading_controlnet_cpds():
 
 
 def downloading_ip_adapters(v):
+    """Downloads the IP adapter models.
+    Args:
+        v (str): The type of IP adapter to download ('ip' or 'face').
+    Returns:
+        list: A list of paths to the downloaded models.
+    """
     assert v in ['ip', 'face']
 
     results = []
@@ -942,6 +1034,10 @@ def downloading_ip_adapters(v):
 
 
 def downloading_upscale_model():
+    """Downloads the upscale model.
+    Returns:
+        str: The path to the downloaded upscale model.
+    """
     load_file_from_url(
         url='https://huggingface.co/lllyasviel/misc/resolve/main/fooocus_upscaler_s409985e5.bin',
         model_dir=path_upscale_models,
@@ -950,6 +1046,10 @@ def downloading_upscale_model():
     return os.path.join(path_upscale_models, 'fooocus_upscaler_s409985e5.bin')
 
 def downloading_safety_checker_model():
+    """Downloads the safety checker model.
+    Returns:
+        str: The path to the downloaded safety checker model.
+    """
     load_file_from_url(
         url='https://huggingface.co/mashb1t/misc/resolve/main/stable-diffusion-safety-checker.bin',
         model_dir=path_safety_checker,
@@ -959,6 +1059,12 @@ def downloading_safety_checker_model():
 
 
 def download_sam_model(sam_model: str) -> str:
+    """Downloads a SAM model.
+    Args:
+        sam_model (str): The name of the SAM model to download.
+    Returns:
+        str: The path to the downloaded SAM model.
+    """
     match sam_model:
         case 'vit_b':
             return downloading_sam_vit_b()
@@ -971,6 +1077,10 @@ def download_sam_model(sam_model: str) -> str:
 
 
 def downloading_sam_vit_b():
+    """Downloads the SAM ViT-B model.
+    Returns:
+        str: The path to the downloaded SAM ViT-B model.
+    """
     load_file_from_url(
         url='https://huggingface.co/mashb1t/misc/resolve/main/sam_vit_b_01ec64.pth',
         model_dir=path_sam,
@@ -980,6 +1090,10 @@ def downloading_sam_vit_b():
 
 
 def downloading_sam_vit_l():
+    """Downloads the SAM ViT-L model.
+    Returns:
+        str: The path to the downloaded SAM ViT-L model.
+    """
     load_file_from_url(
         url='https://huggingface.co/mashb1t/misc/resolve/main/sam_vit_l_0b3195.pth',
         model_dir=path_sam,
@@ -989,6 +1103,10 @@ def downloading_sam_vit_l():
 
 
 def downloading_sam_vit_h():
+    """Downloads the SAM ViT-H model.
+    Returns:
+        str: The path to the downloaded SAM ViT-H model.
+    """
     load_file_from_url(
         url='https://huggingface.co/mashb1t/misc/resolve/main/sam_vit_h_4b8939.pth',
         model_dir=path_sam,

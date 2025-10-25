@@ -27,6 +27,7 @@ TRY_INSTALL_XFORMERS = False
 
 
 def prepare_environment():
+    """Prepares the environment for running the application."""
     torch_index_url = os.environ.get('TORCH_INDEX_URL', "https://download.pytorch.org/whl/cu121")
     torch_command = os.environ.get('TORCH_COMMAND',
                                    f"pip install torch==2.1.0 torchvision==0.16.0 --extra-index-url {torch_index_url}")
@@ -68,6 +69,10 @@ vae_approx_filenames = [
 
 
 def ini_args():
+    """Initializes the arguments.
+    Returns:
+        The arguments.
+    """
     from args_manager import args
     return args
 
@@ -101,6 +106,17 @@ if config.temp_path_cleanup_on_launch:
 
 
 def download_models(default_model, previous_default_models, checkpoint_downloads, embeddings_downloads, lora_downloads, vae_downloads):
+    """Downloads the models.
+    Args:
+        default_model (str): The default model.
+        previous_default_models (list): A list of previous default models.
+        checkpoint_downloads (dict): A dictionary of checkpoint downloads.
+        embeddings_downloads (dict): A dictionary of embeddings downloads.
+        lora_downloads (dict): A dictionary of LoRA downloads.
+        vae_downloads (dict): A dictionary of VAE downloads.
+    Returns:
+        A tuple of the default model and the checkpoint downloads.
+    """
     from modules.util import get_file_from_folder_list
 
     for file_name, url in vae_approx_filenames:

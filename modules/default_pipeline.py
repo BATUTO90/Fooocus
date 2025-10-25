@@ -31,6 +31,10 @@ loaded_ControlNets = {}
 @torch.no_grad()
 @torch.inference_mode()
 def refresh_controlnets(model_paths):
+    """Refreshes the loaded ControlNet models.
+    Args:
+        model_paths (list): A list of paths to the ControlNet models.
+    """
     global loaded_ControlNets
     cache = {}
     for p in model_paths:
@@ -46,6 +50,7 @@ def refresh_controlnets(model_paths):
 @torch.no_grad()
 @torch.inference_mode()
 def assert_model_integrity():
+    """Asserts that the loaded models are valid."""
     error_message = None
 
     if not isinstance(model_base.unet_with_lora.model, SDXL):
@@ -60,6 +65,11 @@ def assert_model_integrity():
 @torch.no_grad()
 @torch.inference_mode()
 def refresh_base_model(name, vae_name=None):
+    """Refreshes the base model.
+    Args:
+        name (str): The name of the base model.
+        vae_name (str, optional): The name of the VAE model. Defaults to None.
+    """
     global model_base
 
     filename = get_file_from_folder_list(name, modules.config.paths_checkpoints)
@@ -80,6 +90,10 @@ def refresh_base_model(name, vae_name=None):
 @torch.no_grad()
 @torch.inference_mode()
 def refresh_refiner_model(name):
+    """Refreshes the refiner model.
+    Args:
+        name (str): The name of the refiner model.
+    """
     global model_refiner
 
     filename = get_file_from_folder_list(name, modules.config.paths_checkpoints)
@@ -111,6 +125,7 @@ def refresh_refiner_model(name):
 @torch.no_grad()
 @torch.inference_mode()
 def synthesize_refiner_model():
+    """Synthesizes a refiner model from the base model."""
     global model_base, model_refiner
 
     print('Synthetic Refiner Activated')
@@ -131,6 +146,11 @@ def synthesize_refiner_model():
 @torch.no_grad()
 @torch.inference_mode()
 def refresh_loras(loras, base_model_additional_loras=None):
+    """Refreshes the LoRAs.
+    Args:
+        loras (list): A list of LoRAs to apply.
+        base_model_additional_loras (list, optional): A list of additional LoRAs to apply to the base model. Defaults to None.
+    """
     global model_base, model_refiner
 
     if not isinstance(base_model_additional_loras, list):
@@ -145,6 +165,14 @@ def refresh_loras(loras, base_model_additional_loras=None):
 @torch.no_grad()
 @torch.inference_mode()
 def clip_encode_single(clip, text, verbose=False):
+    """Encodes a single text prompt using CLIP.
+    Args:
+        clip: The CLIP model.
+        text (str): The text to encode.
+        verbose (bool, optional): Whether to print verbose output. Defaults to False.
+    Returns:
+        The encoded text.
+    """
     cached = clip.fcs_cond_cache.get(text, None)
     if cached is not None:
         if verbose:
@@ -161,6 +189,12 @@ def clip_encode_single(clip, text, verbose=False):
 @torch.no_grad()
 @torch.inference_mode()
 def clone_cond(conds):
+    """Clones a conditioning.
+    Args:
+        conds: The conditioning to clone.
+    Returns:
+        The cloned conditioning.
+    """
     results = []
 
     for c, p in conds:
@@ -180,6 +214,13 @@ def clone_cond(conds):
 @torch.no_grad()
 @torch.inference_mode()
 def clip_encode(texts, pool_top_k=1):
+    """Encodes a list of text prompts using CLIP.
+    Args:
+        texts (list): A list of texts to encode.
+        pool_top_k (int, optional): The number of top-k pooled outputs to use. Defaults to 1.
+    Returns:
+        The encoded texts.
+    """
     global final_clip
 
     if final_clip is None:
@@ -204,6 +245,10 @@ def clip_encode(texts, pool_top_k=1):
 @torch.no_grad()
 @torch.inference_mode()
 def set_clip_skip(clip_skip: int):
+    """Sets the CLIP skip value.
+    Args:
+        clip_skip (int): The CLIP skip value.
+    """
     global final_clip
 
     if final_clip is None:
@@ -215,12 +260,17 @@ def set_clip_skip(clip_skip: int):
 @torch.no_grad()
 @torch.inference_mode()
 def clear_all_caches():
+    """Clears all caches."""
     final_clip.fcs_cond_cache = {}
 
 
 @torch.no_grad()
 @torch.inference_mode()
 def prepare_text_encoder(async_call=True):
+    """Prepares the text encoder for use.
+    Args:
+        async_call (bool, optional): Whether to prepare the text encoder asynchronously. Defaults to True.
+    """
     if async_call:
         # TODO: make sure that this is always called in an async way so that users cannot feel it.
         pass
@@ -233,6 +283,15 @@ def prepare_text_encoder(async_call=True):
 @torch.inference_mode()
 def refresh_everything(refiner_model_name, base_model_name, loras,
                        base_model_additional_loras=None, use_synthetic_refiner=False, vae_name=None):
+    """Refreshes all models and components.
+    Args:
+        refiner_model_name (str): The name of the refiner model.
+        base_model_name (str): The name of the base model.
+        loras (list): A list of LoRAs to apply.
+        base_model_additional_loras (list, optional): A list of additional LoRAs to apply to the base model. Defaults to None.
+        use_synthetic_refiner (bool, optional): Whether to use a synthetic refiner. Defaults to False.
+        vae_name (str, optional): The name of the VAE model. Defaults to None.
+    """
     global final_unet, final_clip, final_vae, final_refiner_unet, final_refiner_vae, final_expansion
 
     final_unet = None
@@ -278,6 +337,12 @@ refresh_everything(
 @torch.no_grad()
 @torch.inference_mode()
 def vae_parse(latent):
+    """Parses a latent tensor using the VAE.
+    Args:
+        latent: The latent tensor to parse.
+    Returns:
+        The parsed latent tensor.
+    """
     if final_refiner_vae is None:
         return latent
 
@@ -288,6 +353,15 @@ def vae_parse(latent):
 @torch.no_grad()
 @torch.inference_mode()
 def calculate_sigmas_all(sampler, model, scheduler, steps):
+    """Calculates all sigmas for a given sampler, model, scheduler, and number of steps.
+    Args:
+        sampler: The sampler.
+        model: The model.
+        scheduler: The scheduler.
+        steps (int): The number of steps.
+    Returns:
+        The calculated sigmas.
+    """
     from ldm_patched.modules.samplers import calculate_sigmas_scheduler
 
     discard_penultimate_sigma = False
@@ -305,6 +379,16 @@ def calculate_sigmas_all(sampler, model, scheduler, steps):
 @torch.no_grad()
 @torch.inference_mode()
 def calculate_sigmas(sampler, model, scheduler, steps, denoise):
+    """Calculates the sigmas for a given sampler, model, scheduler, number of steps, and denoise value.
+    Args:
+        sampler: The sampler.
+        model: The model.
+        scheduler: The scheduler.
+        steps (int): The number of steps.
+        denoise (float): The denoise value.
+    Returns:
+        The calculated sigmas.
+    """
     if denoise is None or denoise > 0.9999:
         sigmas = calculate_sigmas_all(sampler, model, scheduler, steps)
     else:
@@ -317,6 +401,15 @@ def calculate_sigmas(sampler, model, scheduler, steps, denoise):
 @torch.no_grad()
 @torch.inference_mode()
 def get_candidate_vae(steps, switch, denoise=1.0, refiner_swap_method='joint'):
+    """Gets a candidate VAE for a given number of steps, switch value, denoise value, and refiner swap method.
+    Args:
+        steps (int): The number of steps.
+        switch (int): The switch value.
+        denoise (float, optional): The denoise value. Defaults to 1.0.
+        refiner_swap_method (str, optional): The refiner swap method. Defaults to 'joint'.
+    Returns:
+        A tuple that contains the candidate VAE and the candidate refiner VAE.
+    """
     assert refiner_swap_method in ['joint', 'separate', 'vae']
 
     if final_refiner_vae is not None and final_refiner_unet is not None:
@@ -334,6 +427,27 @@ def get_candidate_vae(steps, switch, denoise=1.0, refiner_swap_method='joint'):
 @torch.no_grad()
 @torch.inference_mode()
 def process_diffusion(positive_cond, negative_cond, steps, switch, width, height, image_seed, callback, sampler_name, scheduler_name, latent=None, denoise=1.0, tiled=False, cfg_scale=7.0, refiner_swap_method='joint', disable_preview=False):
+    """Processes the diffusion.
+    Args:
+        positive_cond: The positive conditioning.
+        negative_cond: The negative conditioning.
+        steps (int): The number of steps.
+        switch (int): The switch value.
+        width (int): The width of the image.
+        height (int): The height of the image.
+        image_seed (int): The image seed.
+        callback (function): The callback function.
+        sampler_name (str): The name of the sampler.
+        scheduler_name (str): The name of the scheduler.
+        latent (optional): The latent tensor. Defaults to None.
+        denoise (float, optional): The denoise value. Defaults to 1.0.
+        tiled (bool, optional): Whether to use tiled processing. Defaults to False.
+        cfg_scale (float, optional): The CFG scale. Defaults to 7.0.
+        refiner_swap_method (str, optional): The refiner swap method. Defaults to 'joint'.
+        disable_preview (bool, optional): Whether to disable the preview. Defaults to False.
+    Returns:
+        The processed images.
+    """
     target_unet, target_vae, target_refiner_unet, target_refiner_vae, target_clip \
         = final_unet, final_vae, final_refiner_unet, final_refiner_vae, final_clip
 

@@ -11,6 +11,12 @@ hash_cache = {}
 
 
 def sha256_from_cache(filepath):
+    """Calculates the SHA256 hash of a file, using a cache to avoid recalculating it if it has been calculated before.
+    Args:
+        filepath (str): The path to the file.
+    Returns:
+        str: The SHA256 hash of the file.
+    """
     global hash_cache
     if filepath not in hash_cache:
         print(f"[Cache] Calculating sha256 for {filepath}")
@@ -23,6 +29,7 @@ def sha256_from_cache(filepath):
 
 
 def load_cache_from_file():
+    """Loads the hash cache from a file."""
     global hash_cache
 
     try:
@@ -40,6 +47,11 @@ def load_cache_from_file():
 
 
 def save_cache_to_file(filename=None, hash_value=None):
+    """Saves the hash cache to a file.
+    Args:
+        filename (str, optional): The name of the file to save. Defaults to None.
+        hash_value (str, optional): The hash value to save. Defaults to None.
+    """
     global hash_cache
 
     if filename is not None and hash_value is not None:
@@ -59,6 +71,13 @@ def save_cache_to_file(filename=None, hash_value=None):
 
 
 def init_cache(model_filenames, paths_checkpoints, lora_filenames, paths_loras):
+    """Initializes the hash cache.
+    Args:
+        model_filenames (list): A list of model filenames.
+        paths_checkpoints (list): A list of paths to the model checkpoints.
+        lora_filenames (list): A list of LoRA filenames.
+        paths_loras (list): A list of paths to the LoRAs.
+    """
     load_cache_from_file()
 
     if args_manager.args.rebuild_hash_cache:
@@ -70,6 +89,14 @@ def init_cache(model_filenames, paths_checkpoints, lora_filenames, paths_loras):
 
 
 def rebuild_cache(lora_filenames, model_filenames, paths_checkpoints, paths_loras, max_workers=cpu_count()):
+    """Rebuilds the hash cache.
+    Args:
+        lora_filenames (list): A list of LoRA filenames.
+        model_filenames (list): A list of model filenames.
+        paths_checkpoints (list): A list of paths to the model checkpoints.
+        paths_loras (list): A list of paths to the LoRAs.
+        max_workers (int, optional): The maximum number of workers to use. Defaults to the number of CPUs.
+    """
     def thread(filename, paths):
         filepath = get_file_from_folder_list(filename, paths)
         sha256_from_cache(filepath)

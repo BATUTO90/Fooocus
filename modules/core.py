@@ -35,7 +35,19 @@ opModelSamplingContinuousEDM = ModelSamplingContinuousEDM()
 
 
 class StableDiffusionModel:
+    """A class that represents a Stable Diffusion model, which includes its components: UNet, VAE, and CLIP.
+    It also includes functionality for applying LoRAs.
+    """
     def __init__(self, unet=None, vae=None, clip=None, clip_vision=None, filename=None, vae_filename=None):
+        """Initializes the StableDiffusionModel.
+        Args:
+            unet: UNet model.
+            vae: VAE model.
+            clip: CLIP model for text encoding.
+            clip_vision: CLIP model for image encoding.
+            filename (str): Filename of the main model checkpoint.
+            vae_filename (str): Filename of the VAE model checkpoint.
+        """
         self.unet = unet
         self.vae = vae
         self.clip = clip
@@ -60,6 +72,10 @@ class StableDiffusionModel:
     @torch.no_grad()
     @torch.inference_mode()
     def refresh_loras(self, loras):
+        """Applies a list of LoRAs to the UNet and CLIP models.
+        Args:
+            loras (list): A list of tuples, where each tuple contains the LoRA filename and its weight.
+        """
         assert isinstance(loras, list)
 
         if self.visited_loras == str(loras):
@@ -125,18 +141,46 @@ class StableDiffusionModel:
 @torch.no_grad()
 @torch.inference_mode()
 def apply_freeu(model, b1, b2, s1, s2):
+    """Applies the FreeU patch to a model.
+    Args:
+        model: The model to patch.
+        b1 (float): The first balancing factor.
+        b2 (float): The second balancing factor.
+        s1 (float): The first scaling factor.
+        s2 (float): The second scaling factor.
+    Returns:
+        The patched model.
+    """
     return opFreeU.patch(model=model, b1=b1, b2=b2, s1=s1, s2=s2)[0]
 
 
 @torch.no_grad()
 @torch.inference_mode()
 def load_controlnet(ckpt_filename):
+    """Loads a ControlNet model from a checkpoint file.
+    Args:
+        ckpt_filename (str): The path to the ControlNet checkpoint file.
+    Returns:
+        The loaded ControlNet model.
+    """
     return ldm_patched.modules.controlnet.load_controlnet(ckpt_filename)
 
 
 @torch.no_grad()
 @torch.inference_mode()
 def apply_controlnet(positive, negative, control_net, image, strength, start_percent, end_percent):
+    """Applies a ControlNet to the positive and negative conditioning.
+    Args:
+        positive: The positive conditioning.
+        negative: The negative conditioning.
+        control_net: The ControlNet model.
+        image: The input image for the ControlNet.
+        strength (float): The strength of the ControlNet.
+        start_percent (float): The start percentage for applying the ControlNet.
+        end_percent (float): The end percentage for applying the ControlNet.
+    Returns:
+        A tuple that contains the modified positive and negative conditioning.
+    """
     return opControlNetApplyAdvanced.apply_controlnet(positive=positive, negative=negative, control_net=control_net,
         image=image, strength=strength, start_percent=start_percent, end_percent=end_percent)
 
@@ -144,6 +188,13 @@ def apply_controlnet(positive, negative, control_net, image, strength, start_per
 @torch.no_grad()
 @torch.inference_mode()
 def load_model(ckpt_filename, vae_filename=None):
+    """Loads a Stable Diffusion model from a checkpoint file.
+    Args:
+        ckpt_filename (str): The path to the model checkpoint file.
+        vae_filename (str, optional): The path to the VAE checkpoint file. Defaults to None.
+    Returns:
+        A StableDiffusionModel object.
+    """
     unet, clip, vae, vae_filename, clip_vision = load_checkpoint_guess_config(ckpt_filename, embedding_directory=path_embeddings,
                                                                 vae_filename_param=vae_filename)
     return StableDiffusionModel(unet=unet, clip=clip, vae=vae, clip_vision=clip_vision, filename=ckpt_filename, vae_filename=vae_filename)
@@ -152,12 +203,28 @@ def load_model(ckpt_filename, vae_filename=None):
 @torch.no_grad()
 @torch.inference_mode()
 def generate_empty_latent(width=1024, height=1024, batch_size=1):
+    """Generates an empty latent tensor.
+    Args:
+        width (int, optional): The width of the latent tensor. Defaults to 1024.
+        height (int, optional): The height of the latent tensor. Defaults to 1024.
+        batch_size (int, optional): The batch size. Defaults to 1.
+    Returns:
+        A torch.Tensor that represents the empty latent.
+    """
     return opEmptyLatentImage.generate(width=width, height=height, batch_size=batch_size)[0]
 
 
 @torch.no_grad()
 @torch.inference_mode()
 def decode_vae(vae, latent_image, tiled=False):
+    """Decodes a latent image using the VAE.
+    Args:
+        vae: The VAE model.
+        latent_image: The latent image to decode.
+        tiled (bool, optional): Whether to use tiled decoding. Defaults to False.
+    Returns:
+        The decoded image as a torch.Tensor.
+    """
     if tiled:
         return opVAEDecodeTiled.decode(samples=latent_image, vae=vae, tile_size=512)[0]
     else:
@@ -167,6 +234,14 @@ def decode_vae(vae, latent_image, tiled=False):
 @torch.no_grad()
 @torch.inference_mode()
 def encode_vae(vae, pixels, tiled=False):
+    """Encodes an image into a latent representation using the VAE.
+    Args:
+        vae: The VAE model.
+        pixels: The image to encode.
+        tiled (bool, optional): Whether to use tiled encoding. Defaults to False.
+    Returns:
+        The latent representation as a torch.Tensor.
+    """
     if tiled:
         return opVAEEncodeTiled.encode(pixels=pixels, vae=vae, tile_size=512)[0]
     else:
@@ -176,6 +251,14 @@ def encode_vae(vae, pixels, tiled=False):
 @torch.no_grad()
 @torch.inference_mode()
 def encode_vae_inpaint(vae, pixels, mask):
+    """Encodes an image for inpainting and takes a mask into account.
+    Args:
+        vae: The VAE model.
+        pixels: The image to encode.
+        mask: The inpainting mask.
+    Returns:
+        A tuple that contains the latent representation and the latent mask.
+    """
     assert mask.ndim == 3 and pixels.ndim == 4
     assert mask.shape[-1] == pixels.shape[-2]
     assert mask.shape[-2] == pixels.shape[-3]
@@ -194,7 +277,9 @@ def encode_vae_inpaint(vae, pixels, mask):
 
 
 class VAEApprox(torch.nn.Module):
+    """A lightweight, approximate VAE for generating image previews during the sampling process."""
     def __init__(self):
+        """Initializes the VAEApprox model."""
         super(VAEApprox, self).__init__()
         self.conv1 = torch.nn.Conv2d(4, 8, (7, 7))
         self.conv2 = torch.nn.Conv2d(8, 16, (5, 5))
@@ -207,6 +292,12 @@ class VAEApprox(torch.nn.Module):
         self.current_type = None
 
     def forward(self, x):
+        """Performs the forward pass of the VAEApprox model.
+        Args:
+            x: The input tensor.
+        Returns:
+            The output tensor.
+        """
         extra = 11
         x = torch.nn.functional.interpolate(x, (x.shape[2] * 2, x.shape[3] * 2))
         x = torch.nn.functional.pad(x, (extra, extra, extra, extra))
@@ -222,6 +313,13 @@ VAE_approx_models = {}
 @torch.no_grad()
 @torch.inference_mode()
 def get_previewer(model):
+    """Returns a function that can be used to generate previews of the image during sampling.
+    Args:
+        model: The main Stable Diffusion model.
+    Returns:
+        A function that takes the latent representation, step number, and total steps as input
+        and returns a preview image as a NumPy array.
+    """
     global VAE_approx_models
 
     from modules.config import path_vae_approx
@@ -266,6 +364,33 @@ def ksampler(model, positive, negative, latent, seed=None, steps=30, cfg=7.0, sa
              scheduler='karras', denoise=1.0, disable_noise=False, start_step=None, last_step=None,
              force_full_denoise=False, callback_function=None, refiner=None, refiner_switch=-1,
              previewer_start=None, previewer_end=None, sigmas=None, noise_mean=None, disable_preview=False):
+    """Performs k-sampling to generate an image.
+    Args:
+        model: The main Stable Diffusion model.
+        positive: The positive conditioning.
+        negative: The negative conditioning.
+        latent: The initial latent representation.
+        seed (int, optional): The random seed. Defaults to None.
+        steps (int, optional): The number of sampling steps. Defaults to 30.
+        cfg (float, optional): The CFG scale. Defaults to 7.0.
+        sampler_name (str, optional): The name of the sampler to use. Defaults to 'dpmpp_2m_sde_gpu'.
+        scheduler (str, optional): The name of the scheduler to use. Defaults to 'karras'.
+        denoise (float, optional): The denoising strength. Defaults to 1.0.
+        disable_noise (bool, optional): Whether to disable noise. Defaults to False.
+        start_step (int, optional): The starting step for sampling. Defaults to None.
+        last_step (int, optional): The last step for sampling. Defaults to None.
+        force_full_denoise (bool, optional): Whether to force full denoising. Defaults to False.
+        callback_function (function, optional): A callback function to be called at each step. Defaults to None.
+        refiner (StableDiffusionModel, optional): A refiner model to use. Defaults to None.
+        refiner_switch (int, optional): The step at which to switch to the refiner model. Defaults to -1.
+        previewer_start (int, optional): The starting step for generating previews. Defaults to None.
+        previewer_end (int, optional): The ending step for generating previews. Defaults to None.
+        sigmas (torch.Tensor, optional): The sigmas to use for sampling. Defaults to None.
+        noise_mean (torch.Tensor, optional): The mean of the noise to add. Defaults to None.
+        disable_preview (bool, optional): Whether to disable previews. Defaults to False.
+    Returns:
+        The generated latent representation.
+    """
 
     if sigmas is not None:
         sigmas = sigmas.clone().to(ldm_patched.modules.model_management.get_torch_device())
@@ -328,12 +453,24 @@ def ksampler(model, positive, negative, latent, seed=None, steps=30, cfg=7.0, sa
 @torch.no_grad()
 @torch.inference_mode()
 def pytorch_to_numpy(x):
+    """Converts a list of PyTorch tensors to a list of NumPy arrays.
+    Args:
+        x (list): A list of PyTorch tensors.
+    Returns:
+        A list of NumPy arrays.
+    """
     return [np.clip(255. * y.cpu().numpy(), 0, 255).astype(np.uint8) for y in x]
 
 
 @torch.no_grad()
 @torch.inference_mode()
 def numpy_to_pytorch(x):
+    """Converts a NumPy array to a PyTorch tensor.
+    Args:
+        x (np.ndarray): A NumPy array.
+    Returns:
+        A PyTorch tensor.
+    """
     y = x.astype(np.float32) / 255.0
     y = y[None]
     y = np.ascontiguousarray(y.copy())
