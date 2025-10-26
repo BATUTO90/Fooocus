@@ -6,7 +6,17 @@ import ldm_patched.modules.utils
 import ldm_patched.modules.model_management
 
 class ModelPatcher:
+    """A class for patching models."""
     def __init__(self, model, load_device, offload_device, size=0, current_device=None, weight_inplace_update=False):
+        """Initializes a ModelPatcher.
+        Args:
+            model: The model to patch.
+            load_device (torch.device): The device to load the model on.
+            offload_device (torch.device): The device to offload the model to.
+            size (int, optional): The size of the model. Defaults to 0.
+            current_device (torch.device, optional): The current device of the model. Defaults to None.
+            weight_inplace_update (bool, optional): Whether to update the weights in place. Defaults to False.
+        """
         self.size = size
         self.model = model
         self.patches = {}
@@ -25,6 +35,10 @@ class ModelPatcher:
         self.weight_inplace_update = weight_inplace_update
 
     def model_size(self):
+        """Gets the size of the model.
+        Returns:
+            int: The size of the model in bytes.
+        """
         if self.size > 0:
             return self.size
         model_sd = self.model.state_dict()
@@ -33,6 +47,10 @@ class ModelPatcher:
         return self.size
 
     def clone(self):
+        """Clones the ModelPatcher.
+        Returns:
+            ModelPatcher: The cloned ModelPatcher.
+        """
         n = ModelPatcher(self.model, self.load_device, self.offload_device, self.size, self.current_device, weight_inplace_update=self.weight_inplace_update)
         n.patches = {}
         for k in self.patches:
@@ -44,14 +62,31 @@ class ModelPatcher:
         return n
 
     def is_clone(self, other):
+        """Checks if another ModelPatcher is a clone of this one.
+        Args:
+            other (ModelPatcher): The other ModelPatcher.
+        Returns:
+            bool: True if the other ModelPatcher is a clone of this one, False otherwise.
+        """
         if hasattr(other, 'model') and self.model is other.model:
             return True
         return False
 
     def memory_required(self, input_shape):
+        """Gets the memory required for the model.
+        Args:
+            input_shape (tuple): The input shape.
+        Returns:
+            int: The memory required for the model in bytes.
+        """
         return self.model.memory_required(input_shape=input_shape)
 
     def set_model_sampler_cfg_function(self, sampler_cfg_function, disable_cfg1_optimization=False):
+        """Sets the model's sampler CFG function.
+        Args:
+            sampler_cfg_function (function): The sampler CFG function.
+            disable_cfg1_optimization (bool, optional): Whether to disable CFG1 optimization. Defaults to False.
+        """
         if len(inspect.signature(sampler_cfg_function).parameters) == 3:
             self.model_options["sampler_cfg_function"] = lambda args: sampler_cfg_function(args["cond"], args["uncond"], args["cond_scale"]) #Old way
         else:
@@ -60,20 +95,42 @@ class ModelPatcher:
             self.model_options["disable_cfg1_optimization"] = True
 
     def set_model_sampler_post_cfg_function(self, post_cfg_function, disable_cfg1_optimization=False):
+        """Sets the model's sampler post-CFG function.
+        Args:
+            post_cfg_function (function): The sampler post-CFG function.
+            disable_cfg1_optimization (bool, optional): Whether to disable CFG1 optimization. Defaults to False.
+        """
         self.model_options["sampler_post_cfg_function"] = self.model_options.get("sampler_post_cfg_function", []) + [post_cfg_function]
         if disable_cfg1_optimization:
             self.model_options["disable_cfg1_optimization"] = True
 
     def set_model_unet_function_wrapper(self, unet_wrapper_function):
+        """Sets the model's UNet function wrapper.
+        Args:
+            unet_wrapper_function (function): The UNet function wrapper.
+        """
         self.model_options["model_function_wrapper"] = unet_wrapper_function
 
     def set_model_patch(self, patch, name):
+        """Sets a model patch.
+        Args:
+            patch: The patch to set.
+            name (str): The name of the patch.
+        """
         to = self.model_options["transformer_options"]
         if "patches" not in to:
             to["patches"] = {}
         to["patches"][name] = to["patches"].get(name, []) + [patch]
 
     def set_model_patch_replace(self, patch, name, block_name, number, transformer_index=None):
+        """Sets a model patch replacement.
+        Args:
+            patch: The patch to set.
+            name (str): The name of the patch.
+            block_name (str): The name of the block.
+            number (int): The number of the block.
+            transformer_index (int, optional): The index of the transformer. Defaults to None.
+        """
         to = self.model_options["transformer_options"]
         if "patches_replace" not in to:
             to["patches_replace"] = {}
@@ -86,36 +143,87 @@ class ModelPatcher:
         to["patches_replace"][name][block] = patch
 
     def set_model_attn1_patch(self, patch):
+        """Sets a model attention1 patch.
+        Args:
+            patch: The patch to set.
+        """
         self.set_model_patch(patch, "attn1_patch")
 
     def set_model_attn2_patch(self, patch):
+        """Sets a model attention2 patch.
+        Args:
+            patch: The patch to set.
+        """
         self.set_model_patch(patch, "attn2_patch")
 
     def set_model_attn1_replace(self, patch, block_name, number, transformer_index=None):
+        """Sets a model attention1 replacement.
+        Args:
+            patch: The patch to set.
+            block_name (str): The name of the block.
+            number (int): The number of the block.
+            transformer_index (int, optional): The index of the transformer. Defaults to None.
+        """
         self.set_model_patch_replace(patch, "attn1", block_name, number, transformer_index)
 
     def set_model_attn2_replace(self, patch, block_name, number, transformer_index=None):
+        """Sets a model attention2 replacement.
+        Args:
+            patch: The patch to set.
+            block_name (str): The name of the block.
+            number (int): The number of the block.
+            transformer_index (int, optional): The index of the transformer. Defaults to None.
+        """
         self.set_model_patch_replace(patch, "attn2", block_name, number, transformer_index)
 
     def set_model_attn1_output_patch(self, patch):
+        """Sets a model attention1 output patch.
+        Args:
+            patch: The patch to set.
+        """
         self.set_model_patch(patch, "attn1_output_patch")
 
     def set_model_attn2_output_patch(self, patch):
+        """Sets a model attention2 output patch.
+        Args:
+            patch: The patch to set.
+        """
         self.set_model_patch(patch, "attn2_output_patch")
 
     def set_model_input_block_patch(self, patch):
+        """Sets a model input block patch.
+        Args:
+            patch: The patch to set.
+        """
         self.set_model_patch(patch, "input_block_patch")
 
     def set_model_input_block_patch_after_skip(self, patch):
+        """Sets a model input block patch after the skip connection.
+        Args:
+            patch: The patch to set.
+        """
         self.set_model_patch(patch, "input_block_patch_after_skip")
 
     def set_model_output_block_patch(self, patch):
+        """Sets a model output block patch.
+        Args:
+            patch: The patch to set.
+        """
         self.set_model_patch(patch, "output_block_patch")
 
     def add_object_patch(self, name, obj):
+        """Adds an object patch.
+        Args:
+            name (str): The name of the patch.
+            obj: The object to patch.
+        """
         self.object_patches[name] = obj
 
     def model_patches_to(self, device):
+        """Moves the model patches to a device.
+        Args:
+            device (torch.device): The device to move the patches to.
+        """
         to = self.model_options["transformer_options"]
         if "patches" in to:
             patches = to["patches"]
@@ -137,10 +245,22 @@ class ModelPatcher:
                 self.model_options["model_function_wrapper"] = wrap_func.to(device)
 
     def model_dtype(self):
+        """Gets the dtype of the model.
+        Returns:
+            torch.dtype: The dtype of the model.
+        """
         if hasattr(self.model, "get_dtype"):
             return self.model.get_dtype()
 
     def add_patches(self, patches, strength_patch=1.0, strength_model=1.0):
+        """Adds patches to the model.
+        Args:
+            patches (dict): A dictionary of patches to add.
+            strength_patch (float, optional): The strength of the patch. Defaults to 1.0.
+            strength_model (float, optional): The strength of the model. Defaults to 1.0.
+        Returns:
+            list: A list of the patched keys.
+        """
         p = set()
         for k in patches:
             if k in self.model_keys:
@@ -152,6 +272,12 @@ class ModelPatcher:
         return list(p)
 
     def get_key_patches(self, filter_prefix=None):
+        """Gets the key patches.
+        Args:
+            filter_prefix (str, optional): A prefix to filter the keys by. Defaults to None.
+        Returns:
+            dict: A dictionary of the key patches.
+        """
         ldm_patched.modules.model_management.unload_model_clones(self)
         model_sd = self.model_state_dict()
         p = {}
@@ -166,6 +292,12 @@ class ModelPatcher:
         return p
 
     def model_state_dict(self, filter_prefix=None):
+        """Gets the model's state dict.
+        Args:
+            filter_prefix (str, optional): A prefix to filter the keys by. Defaults to None.
+        Returns:
+            dict: The model's state dict.
+        """
         sd = self.model.state_dict()
         keys = list(sd.keys())
         if filter_prefix is not None:
@@ -175,6 +307,13 @@ class ModelPatcher:
         return sd
 
     def patch_model(self, device_to=None, patch_weights=True):
+        """Patches the model.
+        Args:
+            device_to (torch.device, optional): The device to move the model to. Defaults to None.
+            patch_weights (bool, optional): Whether to patch the weights. Defaults to True.
+        Returns:
+            The patched model.
+        """
         for k in self.object_patches:
             old = getattr(self.model, k)
             if k not in self.object_patches_backup:
@@ -213,6 +352,14 @@ class ModelPatcher:
         return self.model
 
     def calculate_weight(self, patches, weight, key):
+        """Calculates the weight of a patch.
+        Args:
+            patches (list): A list of patches.
+            weight: The weight to patch.
+            key (str): The key of the weight.
+        Returns:
+            The patched weight.
+        """
         for p in patches:
             alpha = p[0]
             v = p[1]
@@ -335,6 +482,10 @@ class ModelPatcher:
         return weight
 
     def unpatch_model(self, device_to=None):
+        """Unpatches the model.
+        Args:
+            device_to (torch.device, optional): The device to move the model to. Defaults to None.
+        """
         keys = list(self.backup.keys())
 
         if self.weight_inplace_update:
